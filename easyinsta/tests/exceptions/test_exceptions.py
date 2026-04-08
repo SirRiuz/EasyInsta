@@ -4,6 +4,7 @@ import pytest
 
 from easyinsta.exceptions import (
     ApiError,
+    AuthRequiredError,
     InvalidFormatError,
     MissingFieldError,
     ProfileNotFoundError,
@@ -74,3 +75,12 @@ class TestRateLimitError:
         """Should have correct message."""
         error = RateLimitError()
         assert "Too many requests" in str(error)
+
+
+class TestAuthRequiredError:
+    """Tests for AuthRequiredError exception."""
+
+    def test_message(self):
+        """Should have correct message."""
+        error = AuthRequiredError()
+        assert "Authentication required" in str(error)
