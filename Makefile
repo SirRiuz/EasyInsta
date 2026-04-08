@@ -3,7 +3,7 @@
 IMAGE_NAME = easyinsta
 
 build:
-	docker build -t $(IMAGE_NAME) .
+	docker build -t $(IMAGE_NAME) -f ci/Dockerfile .
 
 test: build
 	docker run --rm $(IMAGE_NAME) pytest
