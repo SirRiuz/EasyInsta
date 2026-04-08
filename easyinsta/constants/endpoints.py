@@ -15,3 +15,6 @@ class Endpoints:
     # Profiles
     PROFILE_LIGHT = "/api/v1/users/{profile_id}/info/"
     PROFILE_BY_USERNAME = "/api/v1/users/{username}/usernameinfo/"
+
+    # Direct Messages
+    INBOX = "/api/v1/direct_v2/inbox/"

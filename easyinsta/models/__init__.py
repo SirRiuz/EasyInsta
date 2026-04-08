@@ -1,5 +1,9 @@
 from .base import BaseModel
+from .inbox import Inbox
 from .profile import Profile
 from .profile_light import ProfileLight
+from .thread import Thread
 
-__all__ = ["BaseModel", "Profile", "ProfileLight"]
+from easyinsta.constants import ThreadStatus
+
+__all__ = ["BaseModel", "Inbox", "Profile", "ProfileLight", "Thread", "ThreadStatus"]

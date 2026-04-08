@@ -1,13 +1,14 @@
-from easyinsta.modules import Profiles, Validators
+from easyinsta.modules import Auth, Direct, Profiles, Validators
 
 
 class Instagram:
 
     def __init__(self):
+        self.auth = Auth()
+
         # Public modules (no auth required)
         self.validators = Validators()
-        self.profiles = Profiles()
 
         # Private modules (auth required)
-        # self.auth = Auth(self._session)
-        # self.direct = Direct(self._session)
+        self.direct = Direct(self.auth)
+        self.profiles = Profiles(self.auth)

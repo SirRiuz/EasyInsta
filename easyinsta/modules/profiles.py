@@ -1,13 +1,14 @@
 from easyinsta.constants import ErrorMessages
 from easyinsta.models import Profile, ProfileLight
-from easyinsta.modules.utils import (
+from easyinsta.modules.base import AuthenticatedModule, requires_auth
+from easyinsta.utils import (
     fetch_profile_by_id,
     fetch_profile_by_id_no_auth,
     fetch_profile_by_username,
 )
 
 
-class Profiles:
+class Profiles(AuthenticatedModule):
     """
     Profile utility class for Instagram user profiles.
 
@@ -44,6 +45,7 @@ class Profiles:
         user_data = await fetch_profile_by_id_no_auth(profile_id)
         return ProfileLight(user_data)
 
+    @requires_auth
     async def get(
         self,
         username: str | None = None,
@@ -84,15 +86,10 @@ class Profiles:
         if username is None and profile_id is None:
             raise ValueError(ErrorMessages.MISSING_PARAM)
 
-        # TODO: Replace hardcoded token with session-based authentication
-        auth_headers = {
-            "Authorization": "Bearer IGT:2:eyJkc191c2VyX2lkIjoiMTQ5NTc5NzAyNjciLCJzZXNzaW9uaWQiOiIxNDk1Nzk3MDI2NyUzQU1kOWZ1MkpFaENrak5ZJTNBMTYlM0FBWWdlakx5S194amM1Q3RTakdMM20zVm9GcU5UeW42TXV1QWV0SlEzVlEifQ=="
-        }
-
         # NOTE: fetch_profile_by_id uses PROFILE_LIGHT endpoint which returns
         # slightly different data than PROFILE_BY_USERNAME, but Profile model
         # handles both response formats via .get() with defaults.
         fetch = fetch_profile_by_id if profile_id else fetch_profile_by_username
-        user_data = await fetch(profile_id or username, auth_headers)
+        user_data = await fetch(profile_id or username, self._get_credentials())
 
         return Profile(user_data)

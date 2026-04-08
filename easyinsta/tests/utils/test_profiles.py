@@ -1,11 +1,11 @@
-"""Tests for module utilities."""
+"""Tests for profile utilities."""
 
 from unittest.mock import AsyncMock, patch
 
 import pytest
 
 from easyinsta.exceptions import ApiError, ProfileNotFoundError, RateLimitError
-from easyinsta.modules.utils import (
+from easyinsta.utils.profiles import (
     fetch_profile_by_id,
     fetch_profile_by_id_no_auth,
     fetch_profile_by_username,
@@ -20,7 +20,7 @@ class TestFetchProfileByUsername:
         """Should return user data from response."""
         mock_user = {"pk": "123456", "username": "testuser"}
 
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.return_value = {"user": mock_user}
             result = await fetch_profile_by_username("testuser", {"Authorization": "Bearer token"})
 
@@ -29,7 +29,7 @@ class TestFetchProfileByUsername:
     @pytest.mark.asyncio
     async def test_raises_profile_not_found_on_404(self):
         """Should raise ProfileNotFoundError on 404 status."""
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.side_effect = ApiError(404)
 
             with pytest.raises(ProfileNotFoundError) as exc_info:
@@ -40,7 +40,7 @@ class TestFetchProfileByUsername:
     @pytest.mark.asyncio
     async def test_raises_profile_not_found_when_no_user_in_response(self):
         """Should raise ProfileNotFoundError when 'user' not in response."""
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.return_value = {}
 
             with pytest.raises(ProfileNotFoundError):
@@ -49,7 +49,7 @@ class TestFetchProfileByUsername:
     @pytest.mark.asyncio
     async def test_reraises_other_api_errors(self):
         """Should reraise non-404 ApiErrors."""
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.side_effect = ApiError(500)
 
             with pytest.raises(ApiError) as exc_info:
@@ -66,7 +66,7 @@ class TestFetchProfileById:
         """Should return user data from response."""
         mock_user = {"pk": "123456", "username": "testuser"}
 
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.return_value = {"user": mock_user}
             result = await fetch_profile_by_id("123456", {"Authorization": "Bearer token"})
 
@@ -75,7 +75,7 @@ class TestFetchProfileById:
     @pytest.mark.asyncio
     async def test_raises_profile_not_found_on_404(self):
         """Should raise ProfileNotFoundError on 404 status."""
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.side_effect = ApiError(404)
 
             with pytest.raises(ProfileNotFoundError) as exc_info:
@@ -86,7 +86,7 @@ class TestFetchProfileById:
     @pytest.mark.asyncio
     async def test_raises_profile_not_found_when_no_user_in_response(self):
         """Should raise ProfileNotFoundError when 'user' not in response."""
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.return_value = {}
 
             with pytest.raises(ProfileNotFoundError):
@@ -95,7 +95,7 @@ class TestFetchProfileById:
     @pytest.mark.asyncio
     async def test_reraises_other_api_errors(self):
         """Should reraise non-404 ApiErrors."""
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.side_effect = ApiError(500)
 
             with pytest.raises(ApiError) as exc_info:
@@ -112,7 +112,7 @@ class TestFetchProfileByIdNoAuth:
         """Should return user data from response."""
         mock_user = {"pk": "123456", "username": "testuser"}
 
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.return_value = {"user": mock_user}
             result = await fetch_profile_by_id_no_auth("123456")
 
@@ -121,7 +121,7 @@ class TestFetchProfileByIdNoAuth:
     @pytest.mark.asyncio
     async def test_raises_rate_limit_error_on_401(self):
         """Should raise RateLimitError on 401 status (rate limiting)."""
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.side_effect = ApiError(401)
 
             with pytest.raises(RateLimitError):
@@ -130,7 +130,7 @@ class TestFetchProfileByIdNoAuth:
     @pytest.mark.asyncio
     async def test_raises_profile_not_found_on_404(self):
         """Should raise ProfileNotFoundError on 404 status."""
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.side_effect = ApiError(404)
 
             with pytest.raises(ProfileNotFoundError) as exc_info:
@@ -141,7 +141,7 @@ class TestFetchProfileByIdNoAuth:
     @pytest.mark.asyncio
     async def test_raises_profile_not_found_when_no_user_in_response(self):
         """Should raise ProfileNotFoundError when 'user' not in response."""
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.return_value = {}
 
             with pytest.raises(ProfileNotFoundError):
@@ -150,7 +150,7 @@ class TestFetchProfileByIdNoAuth:
     @pytest.mark.asyncio
     async def test_reraises_other_api_errors(self):
         """Should reraise non-401/404 ApiErrors."""
-        with patch("easyinsta.modules.utils.api_call", new_callable=AsyncMock) as mock_api:
+        with patch("easyinsta.utils.profiles.api_call", new_callable=AsyncMock) as mock_api:
             mock_api.side_effect = ApiError(500)
 
             with pytest.raises(ApiError) as exc_info:

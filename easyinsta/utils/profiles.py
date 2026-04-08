@@ -6,7 +6,7 @@ This module contains helper functions for fetching profile data from the API.
 
 from http import HTTPStatus
 
-from easyinsta.utils import api_call
+from easyinsta.utils.http import api_call
 from easyinsta.constants import Endpoints
 from easyinsta.exceptions import ApiError, ProfileNotFoundError, RateLimitError
 
