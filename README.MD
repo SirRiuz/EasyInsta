@@ -16,6 +16,7 @@ Support **Python >= 3.11**
 
 - Login by token (sessionid + ds_user_id encoded)
 - Getting public data of user profiles (by username or user ID)
+- Follow and unfollow users
 - Getting inbox conversations and unread messages
 - Check username and email availability
 - Full async/await support
@@ -127,6 +128,12 @@ user_id = await ig.profiles.user_id_from_username("zuck")  # 314216
 
 # Get username from user ID (requires auth)
 username = await ig.profiles.username_from_user_id("314216")  # 'zuck'
+
+# Follow a user (requires auth)
+await ig.profiles.follow("314216")
+
+# Unfollow a user (requires auth)
+await ig.profiles.unfollow("314216")
 
 # Access profile data
 profile.id              # '314216'

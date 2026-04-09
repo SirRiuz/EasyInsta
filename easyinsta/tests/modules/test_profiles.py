@@ -213,3 +213,67 @@ class TestUsernameFromUserId:
 
         with pytest.raises(AuthRequiredError):
             await profiles.username_from_user_id("123456")
+
+
+class TestProfilesFollow:
+    """Tests for Profiles.follow method."""
+
+    @pytest.mark.asyncio
+    async def test_returns_true_on_success(self, mock_auth):
+        """Should return True when follow is successful."""
+        with patch("easyinsta.modules.profiles.follow_user", new_callable=AsyncMock) as mock_follow:
+            mock_follow.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            result = await profiles.follow("314216")
+
+        assert result is True
+
+    @pytest.mark.asyncio
+    async def test_calls_follow_user_with_correct_params(self, mock_auth):
+        """Should call follow_user with user_id and headers."""
+        with patch("easyinsta.modules.profiles.follow_user", new_callable=AsyncMock) as mock_follow:
+            mock_follow.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            await profiles.follow("314216")
+
+        mock_follow.assert_called_once_with("314216", {"Authorization": "Bearer IGT:2:test_token"})
+
+    @pytest.mark.asyncio
+    async def test_raises_auth_required_when_not_authenticated(self, mock_auth_unauthenticated):
+        """Should raise AuthRequiredError when not authenticated."""
+        profiles = Profiles(mock_auth_unauthenticated)
+
+        with pytest.raises(AuthRequiredError):
+            await profiles.follow("314216")
+
+
+class TestProfilesUnfollow:
+    """Tests for Profiles.unfollow method."""
+
+    @pytest.mark.asyncio
+    async def test_returns_true_on_success(self, mock_auth):
+        """Should return True when unfollow is successful."""
+        with patch("easyinsta.modules.profiles.unfollow_user", new_callable=AsyncMock) as mock_unfollow:
+            mock_unfollow.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            result = await profiles.unfollow("314216")
+
+        assert result is True
+
+    @pytest.mark.asyncio
+    async def test_calls_unfollow_user_with_correct_params(self, mock_auth):
+        """Should call unfollow_user with user_id and headers."""
+        with patch("easyinsta.modules.profiles.unfollow_user", new_callable=AsyncMock) as mock_unfollow:
+            mock_unfollow.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            await profiles.unfollow("314216")
+
+        mock_unfollow.assert_called_once_with("314216", {"Authorization": "Bearer IGT:2:test_token"})
+
+    @pytest.mark.asyncio
+    async def test_raises_auth_required_when_not_authenticated(self, mock_auth_unauthenticated):
+        """Should raise AuthRequiredError when not authenticated."""
+        profiles = Profiles(mock_auth_unauthenticated)
+
+        with pytest.raises(AuthRequiredError):
+            await profiles.unfollow("314216")
