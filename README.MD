@@ -18,7 +18,7 @@ Support **Python >= 3.11**
 - Getting public data of user profiles (by username or user ID)
 - Follow and unfollow users
 - Getting inbox conversations and unread messages
-- Check username and email availability
+- Check if account exists by username or email
 - Full async/await support
 - 100% test coverage
 
@@ -34,7 +34,7 @@ profile = await ig.profiles.get(username="zuck")
 print(profile.username)  # 'zuck'
 ```
 
-## Check Username Availability
+## Check if Account Exists
 
 ```python
 from easyinsta import Instagram
@@ -42,8 +42,11 @@ from easyinsta import Instagram
 ig = Instagram()
 
 # No authentication required
-is_taken = await ig.validators.check_username("zuck")
-print(is_taken)  # True
+exists = await ig.profiles.exists_by_username("zuck")
+print(exists)  # True
+
+exists = await ig.profiles.exists_by_email("test@example.com")
+print(exists)  # True or False
 ```
 
 ## Get Unread Conversations
@@ -75,8 +78,7 @@ for thread in inbox.threads:
 ### Modules
 
 - [Auth](#auth) - Authentication handler (token login, logout)
-- [Profiles](#profiles) - User profile data (by username or ID)
-- [Validators](#validators) - Check username/email availability
+- [Profiles](#profiles) - User profile data, follow/unfollow, account existence checks
 - [Direct](#direct) - Inbox conversations and messages
 
 ### Models
@@ -135,6 +137,12 @@ await ig.profiles.follow("314216")
 # Unfollow a user (requires auth)
 await ig.profiles.unfollow("314216")
 
+# Check if account exists by username (no auth)
+exists = await ig.profiles.exists_by_username("zuck")  # True
+
+# Check if account exists by email (no auth)
+exists = await ig.profiles.exists_by_email("test@example.com")  # True or False
+
 # Access profile data
 profile.id              # '314216'
 profile.username        # 'zuck'
@@ -144,18 +152,6 @@ profile.follower_count  # 123456789
 profile.following_count # 500
 profile.is_verified     # True
 profile.is_private      # False
-```
-
-## Validators
-
-```python
-# No authentication required
-
-# Check username
-is_taken = await ig.validators.check_username("zuck")
-
-# Check email
-is_registered = await ig.validators.check_email("test@example.com")
 ```
 
 ## Direct
