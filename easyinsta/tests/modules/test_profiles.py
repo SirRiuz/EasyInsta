@@ -6,7 +6,7 @@ import pytest
 
 from easyinsta.modules.auth import Auth
 from easyinsta.constants import ErrorMessages
-from easyinsta.exceptions import AuthRequiredError
+from easyinsta.exceptions import AuthRequiredError, InvalidFormatError, MissingFieldError
 from easyinsta.models import Profile, ProfileLight
 from easyinsta.modules.profiles import Profiles
 
@@ -277,3 +277,99 @@ class TestProfilesUnfollow:
 
         with pytest.raises(AuthRequiredError):
             await profiles.unfollow("314216")
+
+
+class TestExistsByUsername:
+    """Tests for Profiles.exists_by_username method."""
+
+    @pytest.mark.asyncio
+    async def test_returns_true_when_account_exists(self, mock_auth):
+        """Should return True when account exists (username not available)."""
+        with patch("easyinsta.modules.profiles.api_call", new_callable=AsyncMock) as mock_api:
+            mock_api.return_value = {"available": False}
+            profiles = Profiles(mock_auth)
+            result = await profiles.exists_by_username("zuck")
+
+        assert result is True
+
+    @pytest.mark.asyncio
+    async def test_returns_false_when_account_does_not_exist(self, mock_auth):
+        """Should return False when account does not exist (username available)."""
+        with patch("easyinsta.modules.profiles.api_call", new_callable=AsyncMock) as mock_api:
+            mock_api.return_value = {"available": True}
+            profiles = Profiles(mock_auth)
+            result = await profiles.exists_by_username("nonexistent_user_12345")
+
+        assert result is False
+
+    @pytest.mark.asyncio
+    async def test_raises_missing_field_error(self, mock_auth):
+        """Should raise MissingFieldError when response lacks 'available' field."""
+        with patch("easyinsta.modules.profiles.api_call", new_callable=AsyncMock) as mock_api:
+            mock_api.return_value = {}
+            profiles = Profiles(mock_auth)
+
+            with pytest.raises(MissingFieldError) as exc_info:
+                await profiles.exists_by_username("testuser")
+
+        assert exc_info.value.field == "available"
+
+
+class TestExistsByEmail:
+    """Tests for Profiles.exists_by_email method."""
+
+    @pytest.mark.asyncio
+    async def test_returns_true_when_account_exists(self, mock_auth):
+        """Should return True when account exists (email not available)."""
+        with patch("easyinsta.modules.profiles.api_call", new_callable=AsyncMock) as mock_api:
+            mock_api.return_value = {"valid": True, "available": False}
+            profiles = Profiles(mock_auth)
+            result = await profiles.exists_by_email("taken@example.com")
+
+        assert result is True
+
+    @pytest.mark.asyncio
+    async def test_returns_false_when_account_does_not_exist(self, mock_auth):
+        """Should return False when account does not exist (email available)."""
+        with patch("easyinsta.modules.profiles.api_call", new_callable=AsyncMock) as mock_api:
+            mock_api.return_value = {"valid": True, "available": True}
+            profiles = Profiles(mock_auth)
+            result = await profiles.exists_by_email("available@example.com")
+
+        assert result is False
+
+    @pytest.mark.asyncio
+    async def test_raises_missing_field_error_for_valid(self, mock_auth):
+        """Should raise MissingFieldError when response lacks 'valid' field."""
+        with patch("easyinsta.modules.profiles.api_call", new_callable=AsyncMock) as mock_api:
+            mock_api.return_value = {}
+            profiles = Profiles(mock_auth)
+
+            with pytest.raises(MissingFieldError) as exc_info:
+                await profiles.exists_by_email("test@example.com")
+
+        assert exc_info.value.field == "valid"
+
+    @pytest.mark.asyncio
+    async def test_raises_invalid_format_error(self, mock_auth):
+        """Should raise InvalidFormatError when email format is invalid."""
+        with patch("easyinsta.modules.profiles.api_call", new_callable=AsyncMock) as mock_api:
+            mock_api.return_value = {"valid": False}
+            profiles = Profiles(mock_auth)
+
+            with pytest.raises(InvalidFormatError) as exc_info:
+                await profiles.exists_by_email("invalid-email")
+
+        assert exc_info.value.field == "email"
+
+    @pytest.mark.asyncio
+    async def test_raises_missing_field_error_for_available(self, mock_auth):
+        """Should raise MissingFieldError when response lacks 'available' field."""
+        with patch("easyinsta.modules.profiles.api_call", new_callable=AsyncMock) as mock_api:
+            mock_api.return_value = {"valid": True}
+            profiles = Profiles(mock_auth)
+
+            with pytest.raises(MissingFieldError) as exc_info:
+                await profiles.exists_by_email("test@example.com")
+
+        assert exc_info.value.field == "available"

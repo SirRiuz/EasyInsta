@@ -1,7 +1,9 @@
-from easyinsta.constants import ErrorMessages
+from easyinsta.constants import Endpoints, ErrorMessages
+from easyinsta.exceptions import InvalidFormatError, MissingFieldError
 from easyinsta.models import Profile, ProfileLight
 from easyinsta.modules.base import AuthenticatedModule, requires_auth
 from easyinsta.utils import (
+    api_call,
     fetch_profile_by_id,
     fetch_profile_by_id_no_auth,
     fetch_profile_by_username,
@@ -199,3 +201,78 @@ class Profiles(AuthenticatedModule):
         """
         await unfollow_user(user_id, self._get_credentials())
         return True
+
+    async def exists_by_username(self, username: str) -> bool:
+        """
+        Check if an Instagram account exists with the given username.
+
+        Queries the Instagram API to determine if the username is already
+        registered to an existing account.
+
+        Note:
+            This method does not require authentication.
+
+        Args:
+            username: The Instagram username to check (without @).
+
+        Returns:
+            True if an account exists with this username, False if available.
+
+        Raises:
+            MissingFieldError: If the response is missing required fields.
+            ApiError: If the API returns a status code other than 200.
+
+        Example:
+            >>> ig = Instagram()
+            >>> await ig.profiles.exists_by_username("zuck")
+            True
+            >>> await ig.profiles.exists_by_username("nonexistent_user_12345")
+            False
+        """
+        data = await api_call(Endpoints.CHECK_USERNAME, body={"username": username})
+
+        if "available" not in data:
+            raise MissingFieldError("available")
+
+        return not data["available"]
+
+    async def exists_by_email(self, email: str) -> bool:
+        """
+        Check if an Instagram account exists with the given email.
+
+        Queries the Instagram API to determine if the email address is already
+        registered to an existing account.
+
+        Note:
+            This method does not require authentication.
+
+        Args:
+            email: The email address to check.
+
+        Returns:
+            True if an account exists with this email, False if available.
+
+        Raises:
+            InvalidFormatError: If the email format is invalid.
+            MissingFieldError: If the response is missing required fields.
+            ApiError: If the API returns a status code other than 200.
+
+        Example:
+            >>> ig = Instagram()
+            >>> await ig.profiles.exists_by_email("taken@example.com")
+            True
+            >>> await ig.profiles.exists_by_email("available@example.com")
+            False
+        """
+        data = await api_call(Endpoints.CHECK_EMAIL, body={"email": email})
+
+        if "valid" not in data:
+            raise MissingFieldError("valid")
+
+        if not data["valid"]:
+            raise InvalidFormatError("email")
+
+        if "available" not in data:
+            raise MissingFieldError("available")
+
+        return not data["available"]

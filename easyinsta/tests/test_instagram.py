@@ -3,7 +3,7 @@
 import pytest
 
 from easyinsta import Instagram
-from easyinsta.modules import Auth, Profiles, Validators
+from easyinsta.modules import Auth, Profiles
 
 
 class TestInstagram:
@@ -13,11 +13,6 @@ class TestInstagram:
         """Should create auth module."""
         ig = Instagram()
         assert isinstance(ig.auth, Auth)
-
-    def test_creates_validators_module(self):
-        """Should create validators module."""
-        ig = Instagram()
-        assert isinstance(ig.validators, Validators)
 
     def test_creates_profiles_module(self):
         """Should create profiles module."""
