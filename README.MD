@@ -21,12 +21,6 @@ Support **Python >= 3.11**
 - Full async/await support
 - 100% test coverage
 
-## Installation
-
-```bash
-pip install easyinsta
-```
-
 ## Basic Usage
 
 ```python
@@ -75,7 +69,6 @@ for thread in inbox.threads:
 
 ### Index
 
-- [Getting Started](#installation)
 - [Basic Usage](#basic-usage)
 
 ### Modules
@@ -185,9 +178,6 @@ if inbox.has_older:
 ## Development
 
 ```bash
-# Install dev dependencies
-pip install -r requirements-dev.txt
-
 # Run tests
 make test
 
