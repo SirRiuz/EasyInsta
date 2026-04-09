@@ -5,6 +5,8 @@ from easyinsta.utils import (
     fetch_profile_by_id,
     fetch_profile_by_id_no_auth,
     fetch_profile_by_username,
+    follow_user,
+    unfollow_user,
 )
 
 
@@ -147,3 +149,53 @@ class Profiles(AuthenticatedModule):
         """
         user_data = await fetch_profile_by_id(user_id, self._get_credentials())
         return user_data["username"]
+
+    @requires_auth
+    async def follow(self, user_id: str) -> bool:
+        """
+        Follow a user.
+
+        Note:
+            This method requires authentication.
+
+        Args:
+            user_id: The Instagram user ID to follow.
+
+        Returns:
+            True if the follow action was successful.
+
+        Raises:
+            ApiError: If the API returns a status code other than 200.
+
+        Example:
+            >>> ig = Instagram()
+            >>> await ig.profiles.follow("314216")
+            True
+        """
+        await follow_user(user_id, self._get_credentials())
+        return True
+
+    @requires_auth
+    async def unfollow(self, user_id: str) -> bool:
+        """
+        Unfollow a user.
+
+        Note:
+            This method requires authentication.
+
+        Args:
+            user_id: The Instagram user ID to unfollow.
+
+        Returns:
+            True if the unfollow action was successful.
+
+        Raises:
+            ApiError: If the API returns a status code other than 200.
+
+        Example:
+            >>> ig = Instagram()
+            >>> await ig.profiles.unfollow("314216")
+            True
+        """
+        await unfollow_user(user_id, self._get_credentials())
+        return True

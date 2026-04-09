@@ -18,3 +18,7 @@ class Endpoints:
 
     # Direct Messages
     INBOX = "/api/v1/direct_v2/inbox/"
+
+    # Friendships
+    FRIENDSHIP_CREATE = "/api/v1/friendships/create/{user_id}/"
+    FRIENDSHIP_DESTROY = "/api/v1/friendships/destroy/{user_id}/"
