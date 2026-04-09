@@ -139,3 +139,77 @@ class TestProfilesGet:
 
         with pytest.raises(AuthRequiredError):
             await profiles.get(username="testuser")
+
+
+class TestUserIdFromUsername:
+    """Tests for Profiles.user_id_from_username method."""
+
+    @pytest.mark.asyncio
+    async def test_returns_user_id_as_int(self, mock_auth):
+        """Should return user ID as integer."""
+        mock_user_data = {"pk": "314216", "username": "zuck"}
+
+        with patch("easyinsta.modules.profiles.fetch_profile_by_username", new_callable=AsyncMock) as mock_fetch:
+            mock_fetch.return_value = mock_user_data
+            profiles = Profiles(mock_auth)
+            result = await profiles.user_id_from_username("zuck")
+
+        assert result == 314216
+        assert isinstance(result, int)
+
+    @pytest.mark.asyncio
+    async def test_calls_fetch_with_username_and_headers(self, mock_auth):
+        """Should call fetch function with username and auth headers."""
+        mock_user_data = {"pk": "123456", "username": "testuser"}
+
+        with patch("easyinsta.modules.profiles.fetch_profile_by_username", new_callable=AsyncMock) as mock_fetch:
+            mock_fetch.return_value = mock_user_data
+            profiles = Profiles(mock_auth)
+            await profiles.user_id_from_username("testuser")
+
+        mock_fetch.assert_called_once_with("testuser", {"Authorization": "Bearer IGT:2:test_token"})
+
+    @pytest.mark.asyncio
+    async def test_raises_auth_required_when_not_authenticated(self, mock_auth_unauthenticated):
+        """Should raise AuthRequiredError when not authenticated."""
+        profiles = Profiles(mock_auth_unauthenticated)
+
+        with pytest.raises(AuthRequiredError):
+            await profiles.user_id_from_username("testuser")
+
+
+class TestUsernameFromUserId:
+    """Tests for Profiles.username_from_user_id method."""
+
+    @pytest.mark.asyncio
+    async def test_returns_username_as_string(self, mock_auth):
+        """Should return username as string."""
+        mock_user_data = {"pk": "314216", "username": "zuck"}
+
+        with patch("easyinsta.modules.profiles.fetch_profile_by_id", new_callable=AsyncMock) as mock_fetch:
+            mock_fetch.return_value = mock_user_data
+            profiles = Profiles(mock_auth)
+            result = await profiles.username_from_user_id("314216")
+
+        assert result == "zuck"
+        assert isinstance(result, str)
+
+    @pytest.mark.asyncio
+    async def test_calls_fetch_with_user_id_and_headers(self, mock_auth):
+        """Should call fetch function with user ID and auth headers."""
+        mock_user_data = {"pk": "123456", "username": "testuser"}
+
+        with patch("easyinsta.modules.profiles.fetch_profile_by_id", new_callable=AsyncMock) as mock_fetch:
+            mock_fetch.return_value = mock_user_data
+            profiles = Profiles(mock_auth)
+            await profiles.username_from_user_id("123456")
+
+        mock_fetch.assert_called_once_with("123456", {"Authorization": "Bearer IGT:2:test_token"})
+
+    @pytest.mark.asyncio
+    async def test_raises_auth_required_when_not_authenticated(self, mock_auth_unauthenticated):
+        """Should raise AuthRequiredError when not authenticated."""
+        profiles = Profiles(mock_auth_unauthenticated)
+
+        with pytest.raises(AuthRequiredError):
+            await profiles.username_from_user_id("123456")
