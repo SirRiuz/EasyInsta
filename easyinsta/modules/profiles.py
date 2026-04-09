@@ -93,3 +93,57 @@ class Profiles(AuthenticatedModule):
         user_data = await fetch(profile_id or username, self._get_credentials())
 
         return Profile(user_data)
+
+    @requires_auth
+    async def user_id_from_username(self, username: str) -> int:
+        """
+        Get user ID by username.
+
+        Note:
+            This method requires authentication.
+
+        Args:
+            username: The Instagram username (without @).
+
+        Returns:
+            The user ID as an integer.
+
+        Raises:
+            ProfileNotFoundError: If the profile is not found.
+            ApiError: If the API returns a status code other than 200.
+
+        Example:
+            >>> ig = Instagram()
+            >>> user_id = await ig.profiles.user_id_from_username("zuck")
+            >>> user_id
+            314216
+        """
+        user_data = await fetch_profile_by_username(username, self._get_credentials())
+        return int(user_data["pk"])
+
+    @requires_auth
+    async def username_from_user_id(self, user_id: str) -> str:
+        """
+        Get username by user ID.
+
+        Note:
+            This method requires authentication.
+
+        Args:
+            user_id: The Instagram user ID.
+
+        Returns:
+            The username as a string.
+
+        Raises:
+            ProfileNotFoundError: If the profile is not found.
+            ApiError: If the API returns a status code other than 200.
+
+        Example:
+            >>> ig = Instagram()
+            >>> username = await ig.profiles.username_from_user_id("314216")
+            >>> username
+            'zuck'
+        """
+        user_data = await fetch_profile_by_id(user_id, self._get_credentials())
+        return user_data["username"]

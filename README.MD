@@ -122,6 +122,12 @@ profile = await ig.profiles.get(profile_id="314216")
 # Get public profile (no auth)
 profile = await ig.profiles.get_public("314216")
 
+# Get user ID from username (requires auth)
+user_id = await ig.profiles.user_id_from_username("zuck")  # 314216
+
+# Get username from user ID (requires auth)
+username = await ig.profiles.username_from_user_id("314216")  # 'zuck'
+
 # Access profile data
 profile.id              # '314216'
 profile.username        # 'zuck'
