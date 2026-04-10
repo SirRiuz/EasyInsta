@@ -14,6 +14,7 @@ Support **Python >= 3.11**
 
 ## Features
 
+- Login with username and password
 - Login by token (sessionid + ds_user_id encoded)
 - Getting public data of user profiles (by username or user ID)
 - Follow and unfollow users
@@ -30,7 +31,7 @@ Support **Python >= 3.11**
 from easyinsta import Instagram
 
 ig = Instagram()
-ig.auth.with_token("your_token")
+await ig.auth.login("your_username", "your_password")
 
 profile = await ig.profiles.get(username="zuck")
 print(profile.username)  # 'zuck'
