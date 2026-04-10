@@ -1,0 +1,12 @@
+POST /api/v1/accounts/login/ HTTP/2
+Host: i.instagram.com
+User-Agent: Instagram 275.0.0.27.98 Android (26/8.0.0; 480dpi; 1080x1920; OnePlus; ONEPLUS A3003; OnePlus3; qcom; en_US; 458229237)
+Cookie: ig_did={ig_did}; ig_nrcb=1; mid={mid};
+X-Ig-App-Id: 936619743392459
+X-Ig-Capabilities: 3brTvwE=
+X-Ig-Connection-Type: WIFI
+Accept-Language: en-US
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 175
+
+username={username}&enc_password=%23PWD_INSTAGRAM%3A0%3A{timestamp}%3A{password}&device_id={device_id}&guid={guid}&adid=&jazoest=22537

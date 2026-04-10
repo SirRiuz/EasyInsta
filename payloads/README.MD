@@ -15,9 +15,9 @@ Each file contains the complete HTTP request including:
 
 | File | Method | Endpoint | Description |
 |------|--------|----------|-------------|
-| `auth_user` | POST | `/api/v1/accounts/login/` | User login |
+| `login` | POST | `/api/v1/accounts/login/` | Login with username and password |
 | `check_token` | GET | `/api/v1/accounts/current_user/` | Validate token |
-| `get_token_from_cookies` | - | - | Extract token from cookies |
+| `get_token_from_cookies` | GET | `/api/v1/accounts/current_user/` | Extract token from cookies |
 
 ### Users
 
@@ -31,68 +31,58 @@ Each file contains the complete HTTP request including:
 
 | File | Method | Endpoint | Description |
 |------|--------|----------|-------------|
-| `get_user_profile_info_by_id` | GET | `/api/v1/users/{id}/info/` | Get profile by user ID |
+| `get_user_profile_info_by_id` | GET | `/api/v1/users/{user_id}/info/` | Get profile by user ID |
 | `get_user_profile_info_by_name` | GET | `/api/v1/users/{username}/usernameinfo/` | Get profile by username |
 | `get_user_profile_info_web` | GET | `/api/v1/users/web_profile_info/` | Get web profile info |
-| `get_user_sso_info` | GET | `/api/v1/users/{id}/sso_info/` | Get SSO information |
+| `get_user_sso_info` | POST | `/api/v1/web/fxcal/ig_sso_users/` | Get SSO information |
 | `get_user_block_list` | GET | `/api/v1/users/blocked_list/` | Get blocked users list |
+
+### Friendships
+
+| File | Method | Endpoint | Description |
+|------|--------|----------|-------------|
+| `follow_user` | POST | `/api/v1/friendships/create/{user_id}/` | Follow a user |
+| `unfollow_user` | POST | `/api/v1/friendships/destroy/{user_id}/` | Unfollow a user |
+| `add_close_friend` | POST | `/api/v1/friendships/set_besties/` | Add user to close friends |
+| `remove_close_friend` | POST | `/api/v1/friendships/set_besties/` | Remove user from close friends |
+| `block_user` | POST | `/api/v1/friendships/block/{user_id}/` | Block a user |
+| `unblock_user` | POST | `/api/v1/friendships/unblock/{user_id}/` | Unblock a user |
 
 ### Content
 
 | File | Method | Endpoint | Description |
 |------|--------|----------|-------------|
-| `get_user_feed` | GET | `/api/v1/feed/user/{id}/` | Get user's feed posts |
-| `get_user_story_by_user_id` | GET | `/api/v1/feed/user/{id}/story/` | Get user's stories |
-| `get_user_highlights_tray` | GET | `/api/v1/highlights/tray/` | Get highlights tray |
-| `get_user_highlights_tray_list_by_id` | GET | `/api/v1/highlights/{id}/highlights_tray/` | Get highlights by ID |
+| `get_user_feed` | GET | `/api/v1/feed/user/{user_id}/` | Get user's feed posts |
+| `get_user_story_by_user_id` | GET | `/api/v1/feed/user/{user_id}/story/` | Get user's stories |
+| `get_user_highlights_tray` | GET | `/api/v1/highlights/{user_id}/highlights_tray/` | Get highlights tray |
+| `get_user_highlights_tray_list_by_id` | GET | `/api/v1/feed/reels_media/` | Get highlights by ID |
 
 ### Direct Messages
 
 | File | Method | Endpoint | Description |
 |------|--------|----------|-------------|
-| `obtener_mensajes_no_leodos_o_marcados` | GET | `/api/v1/direct_v2/inbox/` | Get inbox with unread filter |
+| `get_unread_messages` | GET | `/api/v1/direct_v2/inbox/` | Get inbox with unread filter |
 
-## Examples
+## Placeholders
 
-### Check Username (No Auth Required)
+All sensitive data in the payloads has been replaced with placeholders:
 
-```http
-POST /api/v1/users/check_username/ HTTP/2
-Host: i.instagram.com
-User-Agent: Instagram 275.0.0.27.98 Android (26/8.0.0; 480dpi; 1080x1920; OnePlus; ONEPLUS A3003; OnePlus3; qcom; en_US; 458229237)
-X-Ig-App-Id: 936619743392459
-Content-Type: application/x-www-form-urlencoded
-
-username=zuck
-```
-
-### Get Profile by ID (Auth Required)
-
-```http
-GET /api/v1/users/314216/info/ HTTP/2
-Host: i.instagram.com
-User-Agent: Instagram 275.0.0.27.98 Android (...)
-Authorization: Bearer IGT:2:<token>
-X-Ig-App-Id: 936619743392459
-```
-
-### Get Inbox (Auth Required)
-
-```http
-GET /api/v1/direct_v2/inbox/?visual_message_return_type=unseen&selected_filter=unread&limit=20 HTTP/2
-Host: i.instagram.com
-User-Agent: Instagram 275.0.0.27.98 Android (...)
-Authorization: Bearer IGT:2:<token>
-X-Ig-App-Id: 936619743392459
-```
-
-#### Pagination
-
-To get the next page, add the `cursor` parameter:
-
-```http
-GET /api/v1/direct_v2/inbox/?visual_message_return_type=unseen&selected_filter=unread&limit=20&cursor=<oldest_cursor> HTTP/2
-```
+| Placeholder | Description |
+|-------------|-------------|
+| `{your_token}` | Authorization token |
+| `{user_id}` | Target user ID |
+| `{username}` | Target username |
+| `{email}` | Email address |
+| `{password}` | User password |
+| `{timestamp}` | Unix timestamp |
+| `{device_id}` | Device identifier |
+| `{guid}` | GUID |
+| `{sessionid}` | Session ID cookie |
+| `{ds_user_id}` | User ID cookie |
+| `{ig_did}` | Instagram device ID cookie |
+| `{mid}` | Machine ID cookie |
+| `{highlight_id}` | Highlight ID |
+| `{query}` | Search query |
 
 ## Common Headers
 
@@ -103,12 +93,12 @@ GET /api/v1/direct_v2/inbox/?visual_message_return_type=unseen&selected_filter=u
 | `X-Ig-App-Id` | `936619743392459` | Instagram app ID |
 | `X-Ig-Capabilities` | `3brTvwE=` | App capabilities |
 | `X-Ig-Connection-Type` | `WIFI` | Connection type |
-| `Authorization` | `Bearer IGT:2:<token>` | Auth token (when required) |
+| `Authorization` | `Bearer IGT:2:{your_token}` | Auth token (when required) |
 | `Content-Type` | `application/x-www-form-urlencoded` | For POST requests |
 
 ## Notes
 
 - All endpoints use `i.instagram.com` as the host
 - The User-Agent mimics the Instagram Android app
-- Authorization header format: `Bearer IGT:2:<base64_token>`
+- Authorization header format: `Bearer IGT:2:{token}`
 - Some endpoints work without authentication (check_username, check_email)
