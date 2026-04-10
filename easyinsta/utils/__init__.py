@@ -1,6 +1,13 @@
 from .agents import get_random_user_agent
 from .direct import fetch_inbox
-from .friendships import follow_user, unfollow_user
+from .friendships import (
+    add_close_friend,
+    block_user,
+    follow_user,
+    remove_close_friend,
+    unblock_user,
+    unfollow_user,
+)
 from .http import api_call
 from .profiles import (
     fetch_profile_by_id,
@@ -17,4 +24,8 @@ __all__ = [
     "fetch_profile_by_username",
     "follow_user",
     "unfollow_user",
+    "add_close_friend",
+    "remove_close_friend",
+    "block_user",
+    "unblock_user",
 ]

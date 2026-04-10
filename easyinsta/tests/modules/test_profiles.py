@@ -373,3 +373,131 @@ class TestExistsByEmail:
                 await profiles.exists_by_email("test@example.com")
 
         assert exc_info.value.field == "available"
+
+
+class TestAddToCloseFriends:
+    """Tests for Profiles.add_to_close_friends method."""
+
+    @pytest.mark.asyncio
+    async def test_returns_true_on_success(self, mock_auth):
+        """Should return True when adding to close friends is successful."""
+        with patch("easyinsta.modules.profiles.add_close_friend", new_callable=AsyncMock) as mock_add:
+            mock_add.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            result = await profiles.add_to_close_friends("314216")
+
+        assert result is True
+
+    @pytest.mark.asyncio
+    async def test_calls_add_close_friend_with_correct_params(self, mock_auth):
+        """Should call add_close_friend with user_id and headers."""
+        with patch("easyinsta.modules.profiles.add_close_friend", new_callable=AsyncMock) as mock_add:
+            mock_add.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            await profiles.add_to_close_friends("314216")
+
+        mock_add.assert_called_once_with("314216", {"Authorization": "Bearer IGT:2:test_token"})
+
+    @pytest.mark.asyncio
+    async def test_raises_auth_required_when_not_authenticated(self, mock_auth_unauthenticated):
+        """Should raise AuthRequiredError when not authenticated."""
+        profiles = Profiles(mock_auth_unauthenticated)
+
+        with pytest.raises(AuthRequiredError):
+            await profiles.add_to_close_friends("314216")
+
+
+class TestRemoveFromCloseFriends:
+    """Tests for Profiles.remove_from_close_friends method."""
+
+    @pytest.mark.asyncio
+    async def test_returns_true_on_success(self, mock_auth):
+        """Should return True when removing from close friends is successful."""
+        with patch("easyinsta.modules.profiles.remove_close_friend", new_callable=AsyncMock) as mock_remove:
+            mock_remove.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            result = await profiles.remove_from_close_friends("314216")
+
+        assert result is True
+
+    @pytest.mark.asyncio
+    async def test_calls_remove_close_friend_with_correct_params(self, mock_auth):
+        """Should call remove_close_friend with user_id and headers."""
+        with patch("easyinsta.modules.profiles.remove_close_friend", new_callable=AsyncMock) as mock_remove:
+            mock_remove.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            await profiles.remove_from_close_friends("314216")
+
+        mock_remove.assert_called_once_with("314216", {"Authorization": "Bearer IGT:2:test_token"})
+
+    @pytest.mark.asyncio
+    async def test_raises_auth_required_when_not_authenticated(self, mock_auth_unauthenticated):
+        """Should raise AuthRequiredError when not authenticated."""
+        profiles = Profiles(mock_auth_unauthenticated)
+
+        with pytest.raises(AuthRequiredError):
+            await profiles.remove_from_close_friends("314216")
+
+
+class TestBlock:
+    """Tests for Profiles.block method."""
+
+    @pytest.mark.asyncio
+    async def test_returns_true_on_success(self, mock_auth):
+        """Should return True when blocking is successful."""
+        with patch("easyinsta.modules.profiles.block_user", new_callable=AsyncMock) as mock_block:
+            mock_block.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            result = await profiles.block("314216")
+
+        assert result is True
+
+    @pytest.mark.asyncio
+    async def test_calls_block_user_with_correct_params(self, mock_auth):
+        """Should call block_user with user_id and headers."""
+        with patch("easyinsta.modules.profiles.block_user", new_callable=AsyncMock) as mock_block:
+            mock_block.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            await profiles.block("314216")
+
+        mock_block.assert_called_once_with("314216", {"Authorization": "Bearer IGT:2:test_token"})
+
+    @pytest.mark.asyncio
+    async def test_raises_auth_required_when_not_authenticated(self, mock_auth_unauthenticated):
+        """Should raise AuthRequiredError when not authenticated."""
+        profiles = Profiles(mock_auth_unauthenticated)
+
+        with pytest.raises(AuthRequiredError):
+            await profiles.block("314216")
+
+
+class TestUnblock:
+    """Tests for Profiles.unblock method."""
+
+    @pytest.mark.asyncio
+    async def test_returns_true_on_success(self, mock_auth):
+        """Should return True when unblocking is successful."""
+        with patch("easyinsta.modules.profiles.unblock_user", new_callable=AsyncMock) as mock_unblock:
+            mock_unblock.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            result = await profiles.unblock("314216")
+
+        assert result is True
+
+    @pytest.mark.asyncio
+    async def test_calls_unblock_user_with_correct_params(self, mock_auth):
+        """Should call unblock_user with user_id and headers."""
+        with patch("easyinsta.modules.profiles.unblock_user", new_callable=AsyncMock) as mock_unblock:
+            mock_unblock.return_value = {"status": "ok"}
+            profiles = Profiles(mock_auth)
+            await profiles.unblock("314216")
+
+        mock_unblock.assert_called_once_with("314216", {"Authorization": "Bearer IGT:2:test_token"})
+
+    @pytest.mark.asyncio
+    async def test_raises_auth_required_when_not_authenticated(self, mock_auth_unauthenticated):
+        """Should raise AuthRequiredError when not authenticated."""
+        profiles = Profiles(mock_auth_unauthenticated)
+
+        with pytest.raises(AuthRequiredError):
+            await profiles.unblock("314216")

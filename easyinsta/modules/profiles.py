@@ -3,11 +3,15 @@ from easyinsta.exceptions import InvalidFormatError, MissingFieldError
 from easyinsta.models import Profile, ProfileLight
 from easyinsta.modules.base import AuthenticatedModule, requires_auth
 from easyinsta.utils import (
+    add_close_friend,
     api_call,
+    block_user,
     fetch_profile_by_id,
     fetch_profile_by_id_no_auth,
     fetch_profile_by_username,
     follow_user,
+    remove_close_friend,
+    unblock_user,
     unfollow_user,
 )
 
@@ -276,3 +280,103 @@ class Profiles(AuthenticatedModule):
             raise MissingFieldError("available")
 
         return not data["available"]
+
+    @requires_auth
+    async def add_to_close_friends(self, user_id: str) -> bool:
+        """
+        Add a user to close friends list.
+
+        Note:
+            This method requires authentication.
+
+        Args:
+            user_id: The Instagram user ID to add to close friends.
+
+        Returns:
+            True if the action was successful.
+
+        Raises:
+            ApiError: If the API returns a status code other than 200.
+
+        Example:
+            >>> ig = Instagram()
+            >>> await ig.profiles.add_to_close_friends("314216")
+            True
+        """
+        await add_close_friend(user_id, self._get_credentials())
+        return True
+
+    @requires_auth
+    async def remove_from_close_friends(self, user_id: str) -> bool:
+        """
+        Remove a user from close friends list.
+
+        Note:
+            This method requires authentication.
+
+        Args:
+            user_id: The Instagram user ID to remove from close friends.
+
+        Returns:
+            True if the action was successful.
+
+        Raises:
+            ApiError: If the API returns a status code other than 200.
+
+        Example:
+            >>> ig = Instagram()
+            >>> await ig.profiles.remove_from_close_friends("314216")
+            True
+        """
+        await remove_close_friend(user_id, self._get_credentials())
+        return True
+
+    @requires_auth
+    async def block(self, user_id: str) -> bool:
+        """
+        Block a user.
+
+        Note:
+            This method requires authentication.
+
+        Args:
+            user_id: The Instagram user ID to block.
+
+        Returns:
+            True if the action was successful.
+
+        Raises:
+            ApiError: If the API returns a status code other than 200.
+
+        Example:
+            >>> ig = Instagram()
+            >>> await ig.profiles.block("314216")
+            True
+        """
+        await block_user(user_id, self._get_credentials())
+        return True
+
+    @requires_auth
+    async def unblock(self, user_id: str) -> bool:
+        """
+        Unblock a user.
+
+        Note:
+            This method requires authentication.
+
+        Args:
+            user_id: The Instagram user ID to unblock.
+
+        Returns:
+            True if the action was successful.
+
+        Raises:
+            ApiError: If the API returns a status code other than 200.
+
+        Example:
+            >>> ig = Instagram()
+            >>> await ig.profiles.unblock("314216")
+            True
+        """
+        await unblock_user(user_id, self._get_credentials())
+        return True

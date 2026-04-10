@@ -17,6 +17,8 @@ Support **Python >= 3.11**
 - Login by token (sessionid + ds_user_id encoded)
 - Getting public data of user profiles (by username or user ID)
 - Follow and unfollow users
+- Add and remove users from close friends list
+- Block and unblock users
 - Getting inbox conversations and unread messages
 - Check if account exists by username or email
 - Full async/await support
@@ -103,8 +105,17 @@ for thread in inbox.threads:
 ```python
 ig = Instagram()
 
-# Login with token
+# Login with username and password
+await ig.auth.login("your_username", "your_password")
+
+# Login with token (manual authentication)
 ig.auth.with_token("your_token")
+
+# Login with cookies (sessionid and ds_user_id)
+ig.auth.with_cookies(
+    sessionid="YOUR_SESSION_ID",
+    ds_user_id="YOUR_USER_ID"
+)
 
 # Check if authenticated
 ig.auth.is_authenticated  # True
@@ -136,6 +147,18 @@ await ig.profiles.follow("314216")
 
 # Unfollow a user (requires auth)
 await ig.profiles.unfollow("314216")
+
+# Add to close friends (requires auth)
+await ig.profiles.add_to_close_friends("314216")
+
+# Remove from close friends (requires auth)
+await ig.profiles.remove_from_close_friends("314216")
+
+# Block a user (requires auth)
+await ig.profiles.block("314216")
+
+# Unblock a user (requires auth)
+await ig.profiles.unblock("314216")
 
 # Check if account exists by username (no auth)
 exists = await ig.profiles.exists_by_username("zuck")  # True
