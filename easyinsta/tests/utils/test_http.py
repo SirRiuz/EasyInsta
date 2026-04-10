@@ -8,11 +8,12 @@ from easyinsta.exceptions import ApiError
 from easyinsta.utils.http import BASE_URL, DEFAULT_HEADERS, api_call
 
 
-def create_mock_session(status: int = 200, json_data: dict | None = None):
+def create_mock_session(status: int = 200, json_data: dict | None = None, headers: dict | None = None):
     """Helper to create a properly configured mock session."""
     mock_response = MagicMock()
     mock_response.status = status
     mock_response.json = AsyncMock(return_value=json_data or {})
+    mock_response.headers = headers or {}
 
     mock_request_context = MagicMock()
     mock_request_context.__aenter__ = AsyncMock(return_value=mock_response)
@@ -44,7 +45,8 @@ class TestApiCall:
         ):
             result = await api_call("/api/v1/users/123/info/", method="GET")
 
-        assert result == {"user": {"id": "123"}}
+        assert result["user"] == {"id": "123"}
+        assert "response_context" in result
 
     @pytest.mark.asyncio
     async def test_successful_post_request(self):
@@ -61,7 +63,26 @@ class TestApiCall:
                 "/api/v1/users/check_username/", body={"username": "test"}
             )
 
-        assert result == {"status": "ok"}
+        assert result["status"] == "ok"
+        assert "response_context" in result
+
+    @pytest.mark.asyncio
+    async def test_response_context_contains_status_and_headers(self):
+        """Should include status_code and headers in response_context."""
+        mock_session_context, _ = create_mock_session(
+            status=200,
+            json_data={"status": "ok"},
+            headers={"X-Custom": "value"},
+        )
+
+        with patch(
+            "easyinsta.utils.http.aiohttp.ClientSession",
+            return_value=mock_session_context,
+        ):
+            result = await api_call("/test", method="GET")
+
+        assert result["response_context"]["status_code"] == 200
+        assert result["response_context"]["headers"]["X-Custom"] == "value"
 
     @pytest.mark.asyncio
     async def test_raises_api_error_on_non_200_status(self):

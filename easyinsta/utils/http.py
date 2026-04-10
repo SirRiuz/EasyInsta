@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import aiohttp
 
 from easyinsta.exceptions import ApiError
@@ -21,6 +23,7 @@ async def api_call(
     method: str = "POST",
     body: dict | None = None,
     headers: dict | None = None,
+    raise_exception: bool = True,
 ) -> dict:
     """
     Make an async request to the Instagram API.
@@ -30,12 +33,13 @@ async def api_call(
         method: The HTTP method (GET, POST, etc.).
         body: The request body data (for POST requests).
         headers: Optional additional headers to include.
+        raise_exception: If False, won't raise ApiError on non-200 status.
 
     Returns:
         The JSON response as a dictionary.
 
     Raises:
-        ApiError: If the API returns a status code other than 200.
+        ApiError: If the API returns a status code other than 200 (unless raise_exception=False).
     """
     request_headers = {
         "User-Agent": get_random_user_agent(),
@@ -50,7 +54,18 @@ async def api_call(
             headers=request_headers,
             data=body,
         ) as response:
-            if response.status != 200:
+
+            # Raise exception on non-200 status unless explicitly disabled
+            if raise_exception and response.status != HTTPStatus.OK:
                 raise ApiError(response.status)
 
-            return await response.json()
+            data = await response.json() or {}
+
+            # Attach HTTP metadata (status code, headers) to the response
+            # for cases like extracting auth tokens or handling errors
+            data["response_context"] = {
+                "status_code": response.status,
+                "headers": dict(response.headers),
+            }
+
+            return data
