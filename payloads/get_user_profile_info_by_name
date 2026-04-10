@@ -1,0 +1,8 @@
+GET /api/v1/users/{username}/usernameinfo/ HTTP/2
+Host: i.instagram.com
+User-Agent: Instagram 275.0.0.27.98 Android (26/8.0.0; 480dpi; 1080x1920; OnePlus; ONEPLUS A3003; OnePlus3; qcom; en_US; 458229237)
+Authorization: Bearer IGT:2:{your_token}
+X-Ig-App-Id: 936619743392459
+Accept-Language: en-US
+Accept-Encoding: gzip, deflate
+

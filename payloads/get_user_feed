@@ -1,0 +1,5 @@
+GET /api/v1/feed/user/{user_id}/?count=12 HTTP/2
+Host: i.instagram.com
+User-Agent: Instagram 275.0.0.27.98 Android (26/8.0.0; 480dpi; 1080x1920; OnePlus; ONEPLUS A3003; OnePlus3; qcom; en_US; 458229237)
+Authorization: Bearer IGT:2:{your_token}
+

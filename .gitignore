@@ -22,8 +22,6 @@ docs.zip
 archive.zip
 IDEAS
 main.py
-payloads/*
-!payloads/README.md
 
 # Agent credentials and memory (NEVER COMMIT)
 /memory/
