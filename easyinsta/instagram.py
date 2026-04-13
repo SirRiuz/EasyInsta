@@ -1,4 +1,4 @@
-from easyinsta.modules import Auth, Direct, Profiles
+from easyinsta.modules import Account, Auth, Direct, Profiles
 
 
 class Instagram:
@@ -7,5 +7,6 @@ class Instagram:
         self.auth = Auth()
 
         # Private modules (auth required for some methods)
+        self.account = Account(self.auth)
         self.direct = Direct(self.auth)
         self.profiles = Profiles(self.auth)

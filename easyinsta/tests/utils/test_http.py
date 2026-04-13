@@ -4,8 +4,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+from easyinsta.core.session import Session
 from easyinsta.exceptions import ApiError
-from easyinsta.utils.http import BASE_URL, DEFAULT_HEADERS, api_call
+from easyinsta.utils.http import BASE_URL, api_call, extract_token_from_headers
 
 
 def create_mock_session(status: int = 200, json_data: dict | None = None, headers: dict | None = None):
@@ -27,6 +28,27 @@ def create_mock_session(status: int = 200, json_data: dict | None = None, header
     mock_session_context.__aexit__ = AsyncMock(return_value=None)
 
     return mock_session_context, mock_session
+
+
+class TestExtractTokenFromHeaders:
+    """Tests for extract_token_from_headers function."""
+
+    def test_returns_none_when_headers_is_none(self):
+        """Should return None when headers is None."""
+        assert extract_token_from_headers(None) is None
+
+    def test_returns_none_when_no_authorization_header(self):
+        """Should return None when Authorization header is missing."""
+        assert extract_token_from_headers({"X-Custom": "value"}) is None
+
+    def test_returns_none_when_authorization_not_bearer_igt2(self):
+        """Should return None when Authorization is not Bearer IGT:2."""
+        assert extract_token_from_headers({"Authorization": "Bearer other"}) is None
+
+    def test_extracts_token_from_bearer_igt2(self):
+        """Should extract token from Bearer IGT:2: prefix."""
+        headers = {"Authorization": "Bearer IGT:2:mytoken123"}
+        assert extract_token_from_headers(headers) == "mytoken123"
 
 
 class TestApiCall:
@@ -114,7 +136,7 @@ class TestApiCall:
 
     @pytest.mark.asyncio
     async def test_includes_default_headers(self):
-        """Should include default headers in request."""
+        """Should include default session headers in request."""
         mock_session_context, mock_session = create_mock_session(status=200)
 
         with patch(
@@ -126,8 +148,10 @@ class TestApiCall:
         call_kwargs = mock_session.request.call_args
         headers = call_kwargs.kwargs["headers"]
 
-        for key, value in DEFAULT_HEADERS.items():
-            assert headers[key] == value
+        # Should have key Instagram headers
+        assert "User-Agent" in headers
+        assert "X-Ig-App-ID" in headers
+        assert "X-Ig-Capabilities" in headers
 
     @pytest.mark.asyncio
     async def test_includes_custom_headers(self):
@@ -195,29 +219,39 @@ class TestApiCall:
         call_kwargs = mock_session.request.call_args
         assert call_kwargs.kwargs["data"] == body_data
 
+    @pytest.mark.asyncio
+    async def test_uses_provided_headers(self):
+        """Should use provided headers directly."""
+        mock_session_context, mock_session = create_mock_session(status=200)
 
-class TestDefaultHeaders:
-    """Tests for DEFAULT_HEADERS constant."""
+        custom_headers = {"X-Custom": "value"}
 
-    def test_contains_app_id(self):
-        """Should contain X-Ig-App-Id header."""
-        assert "X-Ig-App-Id" in DEFAULT_HEADERS
+        with patch(
+            "easyinsta.utils.http.aiohttp.ClientSession",
+            return_value=mock_session_context,
+        ):
+            await api_call("/test", method="GET", headers=custom_headers)
 
-    def test_contains_capabilities(self):
-        """Should contain X-Ig-Capabilities header."""
-        assert "X-Ig-Capabilities" in DEFAULT_HEADERS
+        call_kwargs = mock_session.request.call_args
+        headers = call_kwargs.kwargs["headers"]
 
-    def test_contains_connection_type(self):
-        """Should contain X-Ig-Connection-Type header."""
-        assert "X-Ig-Connection-Type" in DEFAULT_HEADERS
+        assert headers == {"X-Custom": "value"}
 
-    def test_contains_accept_language(self):
-        """Should contain Accept-Language header."""
-        assert "Accept-Language" in DEFAULT_HEADERS
+    @pytest.mark.asyncio
+    async def test_no_headers_provided(self):
+        """Should use None when no headers provided."""
+        mock_session_context, mock_session = create_mock_session(status=200)
 
-    def test_contains_content_type(self):
-        """Should contain Content-Type header."""
-        assert "Content-Type" in DEFAULT_HEADERS
+        with patch(
+            "easyinsta.utils.http.aiohttp.ClientSession",
+            return_value=mock_session_context,
+        ):
+            await api_call("/test", method="GET")
+
+        call_kwargs = mock_session.request.call_args
+        headers = call_kwargs.kwargs["headers"]
+
+        assert headers is None
 
 
 class TestBaseUrl:

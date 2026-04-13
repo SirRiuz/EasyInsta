@@ -1,0 +1,10 @@
+POST /api/v1/accounts/set_private/ HTTP/2
+Host: i.instagram.com
+User-Agent: Instagram 278.0.0.19.103 Android (31/12; 480dpi; 1440x3200; samsung; SM-S908B; b0s; exynos2200; en_US; 457547470)
+Authorization: Bearer IGT:2:{your_token}
+X-Ig-App-Id: 936619743392459
+X-Ig-Capabilities: 3brTPw==
+X-Ig-Connection-Type: WIFI
+Accept-Language: en-US
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 0

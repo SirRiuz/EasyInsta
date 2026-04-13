@@ -43,3 +43,6 @@ skills-lock.json
 # macOS
 .DS_Store
 .codspeed
+
+# For test new features and add new ideas
+labs/*

@@ -1,0 +1,14 @@
+POST /api/v1/accounts/change_profile_picture/ HTTP/2
+Host: i.instagram.com
+Authorization: Bearer IGT:2:{your_token}
+User-Agent: Instagram 278.0.0.19.103 Android (31/12; 480dpi; 1440x3200; samsung; SM-S908B; b0s; exynos2200; en_US; 457547470)
+X-Ig-App-Id: 936619743392459
+X-Ig-Capabilities: 3brTPw==
+X-Ig-Connection-Type: WIFI
+X-Ig-Device-Id: 4EA5230C-6A2B-44E5-9542-E7A4149AC5BA
+X-Ig-Android-Id: android-c2d5d1c487d24b4d
+X-Ig-Timezone-Offset: -18000
+X-Ig-Www-Claim: hmac.AR15DbrFJ725WBbDqzRf-QBsEkOsGLrMmREH-JEqRwW9yico
+Content-Type: application/x-www-form-urlencoded
+
+upload_id={upload_id}&use_fbuploader=true&remove_birthday_selfie=False&_uuid={device_id}

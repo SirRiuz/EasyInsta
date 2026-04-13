@@ -16,6 +16,8 @@ Support **Python >= 3.11**
 
 - Login with username and password
 - Login by token (sessionid + ds_user_id encoded)
+- Get authenticated user's account information (email, phone, etc.)
+- Set account privacy (public/private)
 - Getting public data of user profiles (by username or user ID)
 - Follow and unfollow users
 - Add and remove users from close friends list
@@ -81,11 +83,13 @@ for thread in inbox.threads:
 ### Modules
 
 - [Auth](#auth) - Authentication handler (token login, logout)
+- [Account](#account) - Authenticated user's account information
 - [Profiles](#profiles) - User profile data, follow/unfollow, account existence checks
 - [Direct](#direct) - Inbox conversations and messages
 
 ### Models
 
+- **Account** - Authenticated user's account data (email, phone, birthday, etc.)
 - **Profile** - Full user profile data (username, bio, followers, following, etc.)
 - **ProfileLight** - Short public user data (id, username, profile pic)
 - **Inbox** - Inbox with list of threads and pagination
@@ -100,6 +104,36 @@ for thread in inbox.threads:
 - **RateLimitError** - Too many requests
 
 ---
+
+## Account
+
+```python
+# Get authenticated user's account info (requires auth)
+account = await ig.account.account_info()
+
+# Access account data
+account.id              # '123456789'
+account.username        # 'my_username'
+account.full_name       # 'My Name'
+account.email           # 'my_email@example.com'
+account.phone_number    # '+1234567890'
+account.birthday        # '1990-01-01'
+account.biography       # Bio text
+account.follower_count  # 1000
+account.following_count # 500
+account.media_count     # 50
+account.is_verified     # False
+account.is_private      # True
+account.is_business     # False
+account.gender          # 1 (1=male, 2=female, 3=custom)
+account.external_url    # 'https://example.com'
+
+# Set account to public (requires auth)
+await ig.account.set_public()
+
+# Set account to private (requires auth)
+await ig.account.set_private()
+```
 
 ## Auth
 
